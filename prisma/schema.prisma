@@ -356,6 +356,10 @@ model User {
   roleChangeRequestsCreated OrganizationRoleChangeRequest[] @relation("role_change_requester")
   roleChangeRequestsTarget  OrganizationRoleChangeRequest[] @relation("role_change_target_user")
   roleChangeApprovals       OrganizationRoleChangeApproval[] @relation("role_change_approver")
+  sentInvitations           OrganizationInvitation[] @relation("organizationInvitationsSent")
+  acceptedInvitations       OrganizationInvitation[] @relation("organizationInvitationsAccepted")
+  declinedInvitations       OrganizationInvitation[] @relation("organizationInvitationsDeclined")
+  revokedInvitations        OrganizationInvitation[] @relation("organizationInvitationsRevoked")
 
   @@index([walletHash])
   @@index([status])
@@ -504,6 +508,9 @@ model Organization {
   invitationDeliveryOverrides      InvitationDeliveryOverride[]
   invitationDeliveryAuditEvents    InvitationDeliveryAuditEvent[]
   roleChangeRequests               OrganizationRoleChangeRequest[]
+  apiKeyRotations                  ApiKeyRotation[]
+  apiKeyCutoverReceipts            ApiKeyCutoverReceipt[]
+  invitations                      OrganizationInvitation[]
 
   @@index([status])
   @@index([archivedAt])
