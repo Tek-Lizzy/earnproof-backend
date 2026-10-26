@@ -5,10 +5,28 @@
 -- CreateEnum
 CREATE TYPE "RoleChangeRequestStatus" AS ENUM ('PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'EXPIRED');
 
--- AlterEnum
-ALTER TYPE "SecurityNotificationType" ADD VALUE IF NOT EXISTS 'ROLE_CHANGE_REQUESTED';
-ALTER TYPE "SecurityNotificationType" ADD VALUE IF NOT EXISTS 'ROLE_CHANGE_APPROVED';
-ALTER TYPE "SecurityNotificationType" ADD VALUE IF NOT EXISTS 'ROLE_CHANGE_REJECTED';
+-- Ensure SecurityNotificationType exists before adding enum values
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'SecurityNotificationType') THEN
+        CREATE TYPE "SecurityNotificationType" AS ENUM (
+            'SUSPICIOUS_LOGIN',
+            'API_KEY_EXHAUSTED',
+            'KEY_ROTATION_REQUIRED',
+            'ACCESS_REVIEW_REQUIRED',
+            'CIRCUIT_BREAKER_TRIPPED',
+            'DISPUTE_FILED',
+            'SYSTEM_SECURITY_ALERT',
+            'ROLE_CHANGE_REQUESTED',
+            'ROLE_CHANGE_APPROVED',
+            'ROLE_CHANGE_REJECTED'
+        );
+    ELSE
+        ALTER TYPE "SecurityNotificationType" ADD VALUE IF NOT EXISTS 'ROLE_CHANGE_REQUESTED';
+        ALTER TYPE "SecurityNotificationType" ADD VALUE IF NOT EXISTS 'ROLE_CHANGE_APPROVED';
+        ALTER TYPE "SecurityNotificationType" ADD VALUE IF NOT EXISTS 'ROLE_CHANGE_REJECTED';
+    END IF;
+END $$;
 
 -- AlterTable
 ALTER TABLE "OrganizationMember" ADD COLUMN "revision" INTEGER NOT NULL DEFAULT 0;
